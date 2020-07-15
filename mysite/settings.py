@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['sample2-django.herokuapp.com', '127.0.0.1']
 
 INSTALLED_APPS = [
     'myapp',
+    'social_django',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
