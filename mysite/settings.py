@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '9ytuh3qnf728e^g@)51b6%wbi*8$btxez-b*@9q=86l$kz58l!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['sample2-django.herokuapp.com', '127.0.0.1']
 
@@ -58,7 +58,7 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -111,9 +111,21 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.github.GithubOAuth2',
     'social_core.backends.google.GoogleOAuth2',
-    'social_core.backends.linkedin.LinkedinOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
+
+#SOCAIL ACCOUNTS
+SOCIAL_AUTH_GITHUB_KEY = '64bb1387469db405c532'
+SOCIAL_AUTH_GITHUB_SECRET = 'f65bad213b1cd41542022efe10c3a8f46ba0e326'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '608285229918-n1mctkfht5jshe074qe7b954ism5el3m.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'ZLfl1eUBQaB295nRw1le2sc5'
+
+
+#LOGIN BOOLEANS
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
+LOGIN_REDIRECT_URL = 'home'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
