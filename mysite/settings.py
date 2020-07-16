@@ -111,6 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.github.GithubOAuth2',
     'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.linkedin.LinkedinOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -121,11 +122,28 @@ SOCIAL_AUTH_GITHUB_SECRET = 'f65bad213b1cd41542022efe10c3a8f46ba0e326'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '608285229918-n1mctkfht5jshe074qe7b954ism5el3m.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'ZLfl1eUBQaB295nRw1le2sc5'
 
+SOCIAL_AUTH_LINKEDIN_OAUTH2_KEY = '86gye4tm4k4vfv'
+SOCIAL_AUTH_LINKEDIN_OAUTH2_SECRET = 'IeTBmFSVxuY3pWJ4'
+SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ['r_liteprofile', 'r_emailaddress']
+SOCIAL_AUTH_LINKEDIN_OAUTH2_FIELD_SELECTORS = ['email-address', 'formatted-name', 'public-profile-url', 'picture-url']
+SOCIAL_AUTH_LINKEDIN_OAUTH2_EXTRA_DATA = [
+    ('id', 'id'),
+    ('formattedName', 'name'),
+    ('emailAddress', 'email_address'),
+    ('pictureUrl', 'picture_url'),
+    ('publicProfileUrl', 'profile_url'),
+]
 
 #LOGIN BOOLEANS
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'login'
+
+#AUTHENTICATION
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/settings/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/settings/'
+SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
