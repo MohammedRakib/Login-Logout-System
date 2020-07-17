@@ -1,31 +1,31 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AdminPasswordChangeForm, PasswordChangeForm
-from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import AdminPasswordChangeForm, PasswordChangeForm, UserCreationForm
+from django.contrib.auth import update_session_auth_hash, login, authenticate
 from django.contrib import messages
 from social_django.models import UserSocialAuth
-
 from .models import Student
 
 
-def index(request):
+def signup(request):
     if request.method == 'POST':
-        fname = request.POST.get('fname')
-        email = request.POST.get('email')
-        print(fname)
-        print(email)
-        s = Student(first_name=fname, email=email)
-        s.save()
-    return render(request, 'lol.html')
-
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            user = authenticate(
+                username=form.cleaned_data.get('username'),
+                password=form.cleaned_data.get('password1')
+            )
+            login(request, user)
+            return redirect('home')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/signup.html', {'form': form})
 
 @login_required()
 def home(request):
     return render(request, 'home.html')
-
-def base(request):
-    return render(request,'base.html')
 
 @login_required
 def settings(request):
@@ -37,12 +37,12 @@ def settings(request):
         github_login = None
 
     try:
-        google_login = user.social_auth.get(provider='google')
+        google_login = user.social_auth.get(provider='google-oauth2')
     except UserSocialAuth.DoesNotExist:
         google_login = None
 
     try:
-        linkedin_login = user.social_auth.get(provider='linkedin')
+        linkedin_login = user.social_auth.get(provider='linkedin-oauth2')
     except UserSocialAuth.DoesNotExist:
         linkedin_login = None
 
@@ -52,7 +52,7 @@ def settings(request):
         'github_login': github_login,
         'google_login': google_login,
         'linkedin_login': linkedin_login,
-        'can_disconnect': can_disconnect
+        'can_disconnect': can_disconnect,
     })
 
 @login_required
@@ -74,3 +74,13 @@ def password(request):
     else:
         form = PasswordForm(request.user)
     return render(request, 'password.html', {'form': form})
+
+def index(request):
+    if request.method == 'POST':
+        fname = request.POST.get('fname')
+        email = request.POST.get('email')
+        print(fname)
+        print(email)
+        s = Student(first_name=fname, email=email)
+        s.save()
+    return render(request, 'lol.html')

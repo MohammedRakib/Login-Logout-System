@@ -1,7 +1,7 @@
-<!DOCTYPE html>
-
+{% extends 'base.html' %}
 {% block content %}
-  <h2>Settings</h2>
+  <h2>Settings</h2><br>
+<!--<a href="{% url 'home' %}">Home</a> | <a href="{% url 'logout' %}">Logout</a>-->
 
   <h3>GitHub</h3>
   {% if github_login %}
@@ -21,7 +21,7 @@
 
   <h3>Google</h3>
   {% if google_login %}
-    <p>Connected as <a href="https://google.com/{{ google_login.extra_data. }}/" target="_blank">@{{ google_login.extra_data.access_token.screen_name }}</a></p>
+    <p>Connected as {{ google_login.uid }}</p>
     {% if can_disconnect %}
       <form method="post" action="{% url 'social:disconnect' 'google-oauth2' %}">
         {% csrf_token %}
@@ -37,7 +37,7 @@
 
   <h3>LinkedIn</h3>
   {% if linkedin_login %}
-    <p>Connected as <a href="https://linkedin.com/{{ linkedin_login.extra_data.first_name }}/" target="_blank">{{ linkedin_login.extra_data.first_name }}</a></p>
+    <p>Connected as <a href="https://linkedin.com/in/{{ linkedin_login.extra_data.first_name.localized.en_US }}{{ linkedin_login.extra_data.last_name.localized.en_US }}/" target="_blank">{{ linkedin_login.extra_data.first_name.localized.en_US}}</a></p>
     {% if can_disconnect %}
       <form method="post" action="{% url 'social:disconnect' 'linkedin-oauth2' %}">
         {% csrf_token %}
