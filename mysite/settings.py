@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '9ytuh3qnf728e^g@)51b6%wbi*8$btxez-b*@9q=86l$kz58l!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['sample2-django.herokuapp.com', '127.0.0.1']
 
@@ -32,6 +32,8 @@ ALLOWED_HOSTS = ['sample2-django.herokuapp.com', '127.0.0.1']
 
 INSTALLED_APPS = [
     'myapp',
+    'social_django',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,7 +43,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'social_django.middleware.SocialAuthExceptionMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -56,10 +60,13 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
+
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -104,6 +111,92 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.github.GithubOAuth2',
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.linkedin.LinkedinOAuth2',
+
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+#SOCAIL ACCOUNTS
+SOCIAL_AUTH_GITHUB_KEY = '64bb1387469db405c532'
+SOCIAL_AUTH_GITHUB_SECRET = 'f65bad213b1cd41542022efe10c3a8f46ba0e326'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '608285229918-n1mctkfht5jshe074qe7b954ism5el3m.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'ZLfl1eUBQaB295nRw1le2sc5'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+'https://www.googleapis.com/auth/userinfo.profile',
+'https://www.googleapis.com/auth/userinfo.email',
+]
+
+SOCIAL_AUTH_LINKEDIN_OAUTH2_KEY = '86gye4tm4k4vfv'
+SOCIAL_AUTH_LINKEDIN_OAUTH2_SECRET = 'IeTBmFSVxuY3pWJ4'
+SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ['r_liteprofile', 'r_emailaddress']
+SOCIAL_AUTH_LINKEDIN_OAUTH2_FIELD_SELECTORS = ['email-address', 'formatted-name', 'public-profile-url', 'picture-url']
+SOCIAL_AUTH_LINKEDIN_OAUTH2_EXTRA_DATA = [
+    ('id', 'id'),
+    ('formatted-name', 'name'),
+    ('email-address', 'email_address'),
+    ('picture-url', 'picture_url'),
+    ('public-profile-url', 'profile_url'),
+]
+
+SOCIAL_AUTH_PIPELINE = (
+        # Get the information we can about the user and return it in a simple
+    # format to create the user instance later. In some cases the details are
+    # already part of the auth response from the provider, but sometimes this
+    # could hit a provider API.
+    'social_core.pipeline.social_auth.social_details',
+
+    # Get the social uid from whichever service we're authing thru. The uid is
+    # the unique identifier of the given user in the provider.
+    'social_core.pipeline.social_auth.social_uid',
+
+    # Verifies that the current auth process is valid within the current
+    # project, this is where emails and domains whitelists are applied (if
+    # defined).
+    'social_core.pipeline.social_auth.auth_allowed',
+
+    # Checks if the current social-account is already associated in the site.
+    'social_core.pipeline.social_auth.social_user',
+
+    # Make up a username for this person, appends a random string at the end if
+    # there's any collision.
+    'social_core.pipeline.user.get_username',
+
+    # Send a validation email to the user to verify its email address.
+    # Disabled by default.
+    'social_core.pipeline.mail.mail_validation',
+
+    # Associates the current social details with another user account with
+    # a similar email address. Disabled by default.
+    # 'social_core.pipeline.social_auth.associate_by_email',
+
+    # Create a user account if we haven't found one yet.
+    'social_core.pipeline.user.create_user',
+
+    # Create the record that associates the social account with the user.
+    'social_core.pipeline.social_auth.associate_user',
+
+    # Populate the extra_data field in the social record with the values
+    # specified by settings (and the default ones like access_token, etc).
+    'social_core.pipeline.social_auth.load_extra_data',
+
+    # Update the user record with any changed info from the auth service.
+    'social_core.pipeline.user.user_details',
+)
+
+# Login, logout, login redirect, logout redirect URL
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = 'login'
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/settings/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/settings/'
+SOCIAL_AUTH_RAISE_EXCEPTIONS = False
+
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
@@ -122,5 +215,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+#Static Root specifies the diretory from where all static files will be fetched when deployed
+#in a web server. The server runs the python manage.py collectstatic command which creates a folder
+#inside the directory mentioned in the STATIC ROOT command (in our case the folder name is static files) and copies all static files to that folder
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
+#STATIC_DIRS no need if there is a static folder in each app's directory
+
+
